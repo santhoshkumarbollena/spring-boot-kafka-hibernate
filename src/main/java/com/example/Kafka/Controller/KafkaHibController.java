@@ -1,6 +1,7 @@
 package com.example.Kafka.Controller;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,20 +21,23 @@ public class KafkaHibController {
 	@Autowired
 	 private  UserRepository repository;
 	@Autowired
-	KafkaTemplate<String,String> kt;
+	KafkaTemplate<String,User> kt;
 
 	  @GetMapping("/users")
 	  @ResponseStatus(code=HttpStatus.BAD_REQUEST)
 	  List<User> all() {
 		 List<User> users= repository.findAll();
-	    kt.send("bearcat-messages",users.toString());
+		
+	   users.stream().forEach((user)->{
+		   kt.send("bearcat-messages",user);
+	   });
 	    return users;
 	  }
 	  
 	  @PostMapping(path = "/add-user", consumes = "application/json", produces = "application/json")
 		public String addUser(@RequestBody User newUser) {
 		    System.out.println(newUser);
-		    kt.send("bearcat-messages",newUser.toString());
+		    kt.send("bearcat-messages",newUser);
 		    User addedUser = repository.save(newUser);
 		    return "Added User"+addedUser.toString();
 		}
