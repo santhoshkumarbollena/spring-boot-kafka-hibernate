@@ -23,6 +23,7 @@ public class KafkaHibController {
 	@Autowired
 	KafkaTemplate<String,User> kt;
 
+	   //Getting all users from DB and produce to topic
 	  @GetMapping("/users")
 	  @ResponseStatus(code=HttpStatus.BAD_REQUEST)
 	  List<User> all() {
@@ -33,7 +34,7 @@ public class KafkaHibController {
 	   });
 	    return users;
 	  }
-	  
+	  //Adding user to DB and Produce to topic
 	  @PostMapping(path = "/add-user", consumes = "application/json", produces = "application/json")
 		public String addUser(@RequestBody User newUser) {
 		    System.out.println(newUser);
